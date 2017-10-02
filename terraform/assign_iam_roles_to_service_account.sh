@@ -71,7 +71,7 @@ fi
 echo -e "\nAdding WRITE permissions to terraform state bucket... wait"
 gsutil acl ch -u ${GCP_SERVICE_ACCOUNT}:W gs://ml-terraform-states 1> /dev/null
 if [ "$?" != "0" ]; then
-    echo "Can't assign WRITE permissions for ${GCP_SERVICE_ACCOUNT} on cw-voluum-terraform-states bucket. Please debug."
+    echo "Can't assign WRITE permissions for ${GCP_SERVICE_ACCOUNT} on ml-terraform-states bucket. Please debug."
     exit
 else
     echo "WRITE Permissions assigned successfully."
