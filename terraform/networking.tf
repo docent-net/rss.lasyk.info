@@ -27,3 +27,14 @@ resource "google_compute_address" "rss-ip-address" {
   name = "rss-ip-address"
   region = "${var.region}"
 }
+
+resource "google_dns_record_set" "cloud_dns_rr" {
+  provider = "google.dns_host_project"
+  name = "rss.lasyk.info."
+  type = "A"
+  ttl  = 300
+
+  managed_zone = "lasyk-info"
+
+  rrdatas = ["${google_compute_address.rss-ip-address.address}"]
+}

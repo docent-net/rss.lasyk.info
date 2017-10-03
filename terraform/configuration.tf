@@ -12,6 +12,12 @@ variable google_project_id {
   default = "rss-lasyk-info"
 }
 
+# where is Cloud DNS / domain hosted (which GCP project)?
+variable dns_host_google_project_id {
+  type = "string"
+  default = "maciej-lasyk-info"
+}
+
 variable region {
   type = "string"
   default = "us-central1"
@@ -21,6 +27,13 @@ provider "google" {
   project = "${var.google_project_id}"
   region = "${var.region}"
   alias = "us-central1"
+}
+
+provider "google" {
+  project = "${var.dns_host_google_project_id}"
+  region = "${var.region}"
+  alias = "dns_host_project"
+  credentials = "${file("link-to-dns-service-account.json")}"
 }
 
 variable rss-cloud_storage_bucket_name {
