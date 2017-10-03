@@ -1,0 +1,12 @@
+- name: Install pkgs
+  yum:
+    name: mariadb
+    state: installed
+
+- name: Ensure mariadb is started after boot
+  service:
+    name: mariadb
+    enabled: yes
+    state: started
+
+# todo: safe mysql installation; export root pwd to /root/.my.cnf

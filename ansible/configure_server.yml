@@ -1,0 +1,9 @@
+---
+- name: RSS provisioner
+  gather_facts: false
+  hosts: localhost
+  become: no
+  roles:
+    - mariadb
+    - nginx
+    - configure_ttrss

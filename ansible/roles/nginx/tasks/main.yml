@@ -1,0 +1,10 @@
+- name: Install pkgs
+  yum:
+    name: nginx
+    state: installed
+
+- name: Ensure Nginx is started after boot
+  service:
+    name: nginx
+    enabled: yes
+    state: started`

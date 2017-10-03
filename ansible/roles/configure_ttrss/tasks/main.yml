@@ -1,0 +1,7 @@
+# todo: load WWW from backup
+# todo: create ttrss mariadb user and change its pwd in config.php
+# todo: load DB data from backup
+# todo: generate SSL cert from letsencrypt and export to safe storage
+# todo: reconfigure nginx (SSL)
+# todo: configure systemd timer (updating RSS entries)
+# todo: configure systemd timer (create daily backup and upload to cloud storage)
