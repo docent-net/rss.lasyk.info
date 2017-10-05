@@ -1,4 +1,5 @@
 # todo: load WWW from backup
+- include: load_web_backup.yml
 # todo: create ttrss mariadb user and change its pwd in config.php
 # todo: load DB data from backup
 # todo: generate SSL cert from letsencrypt and export to safe storage
