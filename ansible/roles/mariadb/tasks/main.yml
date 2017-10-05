@@ -1,7 +1,19 @@
+- name: Add MariaDB repo
+  template:
+    src: mariadb_centos.repo.j2
+    dest: /etc/yum.repos.d/mariadb.repo
+    owner: root
+    group: root
+    mode: 0644
+
 - name: Install pkgs
   yum:
-    name: mariadb
+    name: "{{ item }}"
     state: installed
+    enablerepo: mariadb
+  with_items:
+    - MariaDB-server
+    - MariaDB-client
 
 - name: Ensure mariadb is started after boot
   service:
@@ -9,4 +21,60 @@
     enabled: yes
     state: started
 
-# todo: safe mysql installation; export root pwd to /root/.my.cnf
+- name: Install MySQLdb Python package for secure installations.
+  yum:
+    name: MySQL-python
+    state: present
+  when: mysql_secure_installation and mysql_root_password is defined
+
+- name: Generate password
+  set_fact:
+    mariadb_root_pass: "{{ ansible_fqdn | uuid | password_hash('sha512') }}"
+
+# mysql_safe_installation
+- name: Set root Password
+  mysql_user:
+    name: root
+    host: "{{ item }}"
+    password: "{{ mariadb_root_pass }}"
+    state: present
+  with_items:
+    - localhost
+    - 127.0.0.1
+    - ::1
+
+- name: Reload privilege tables
+  command: 'mysql -ne "FLUSH PRIVILEGES"'
+  changed_when: False
+
+- name: Add .my.cnf
+  template:
+    src: my.cnf.j2
+    dest: /root/.my.cnf
+    owner: root
+    group: root
+    mode: 0600
+
+- name: Remove anonymous users
+  command: 'mysql -ne "{{ item }}"'
+  with_items:
+    - DELETE FROM mysql.user WHERE User=''
+  changed_when: False
+
+- name: Disallow root login remotely
+  command: 'mysql -ne "{{ item }}"'
+  with_items:
+    - DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1')
+  changed_when: False
+
+- name: Remove test database and access to it
+  command: 'mysql -ne "{{ item }}"'
+  with_items:
+    - DROP DATABASE test
+    - DELETE FROM mysql.db WHERE Db='test' OR Db='test\\_%'
+  changed_when: False
+  ignore_errors: True
+
+- name: Reload privilege tables
+  command: 'mysql -ne "FLUSH PRIVILEGES"'
+  changed_when: False

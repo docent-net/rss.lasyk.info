@@ -2,6 +2,7 @@
 - name: RSS provisioner
   gather_facts: false
   hosts: localhost
+  connection: local
   become: no
   roles:
     - mariadb
