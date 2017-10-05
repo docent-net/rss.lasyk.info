@@ -1,6 +1,6 @@
 ---
 - name: RSS provisioner
-  gather_facts: false
+  gather_facts: true
   hosts: localhost
   connection: local
   become: no

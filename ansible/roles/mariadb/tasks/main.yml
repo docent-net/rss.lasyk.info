@@ -25,7 +25,6 @@
   yum:
     name: MySQL-python
     state: present
-  when: mysql_secure_installation and mysql_root_password is defined
 
 - name: Generate password
   set_fact:
