@@ -3,6 +3,8 @@
     path: /srv/rss.lasyk.info
   register: www_directory
 
+- debug: var=www_directory
+
 - block:
   - name: Download web backup from Cloud storage
     # not using ansible gc_storage module as it doesn't support
