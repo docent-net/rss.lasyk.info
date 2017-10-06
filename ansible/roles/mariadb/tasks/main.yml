@@ -91,4 +91,5 @@
   - name: Reload privilege tables
     command: 'mysql -ne "FLUSH PRIVILEGES"'
     changed_when: False
+
   when: mysql_config_exists.stat.exists == false

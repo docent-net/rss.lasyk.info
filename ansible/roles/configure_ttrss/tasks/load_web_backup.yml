@@ -1,6 +1,6 @@
 - name: Download web backup from Cloud storage
   gc_storage:
-    bucket: "{{ cloud_storage_bucket_name }}"
+    bucket: "{{ gcp.cloud_storage_bucket_name }}"
     object: backups/rss.lasyk.info-latest.tar.gz
     dest: /srv/rss.lasyk.info-latest.tar.gz
     mode: get
