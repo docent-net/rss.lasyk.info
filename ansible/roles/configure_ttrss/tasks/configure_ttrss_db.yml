@@ -27,7 +27,7 @@
       line: " define('DB_PASS', '{{ mariadb_ttrss_pass }}');"
 
   - name: Create config.php
-    command: mv /srv/rss.lasyk.info/config.php.tpl mv /srv/rss.lasyk.info/config.php
+    command: mv /srv/rss.lasyk.info/config.php.tpl /srv/rss.lasyk.info/config.php
     args:
       creates: /srv/rss.lasyk.info/config.php
 
