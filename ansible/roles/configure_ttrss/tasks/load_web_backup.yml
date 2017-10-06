@@ -1,6 +1,6 @@
 - name: Check if directory exists
   stat:
-    path: /srv/www.rss.lasyk.info
+    path: /srv/rss.lasyk.info
   register: www_directory
 
 - block:
@@ -29,4 +29,4 @@
     args:
       creates: /srv/rss.lasyk.info/config.php.tpl
 
-  when: www_directory.stat.exists == false
+  when: www_directory.stat.exists == false//
