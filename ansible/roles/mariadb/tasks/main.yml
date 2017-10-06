@@ -34,7 +34,7 @@
 
 - name: Generate password
   set_fact:
-    mariadb_root_pass: "{{ mariadb_root_pass.output }}"
+    mariadb_root_pass: "{{ mariadb_root_pass_generated.output }}"
 
 # mysql_safe_installation
 - name: Set root Password
