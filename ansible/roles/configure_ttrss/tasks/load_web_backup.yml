@@ -29,4 +29,4 @@
     args:
       creates: /srv/rss.lasyk.info/config.php.tpl
 
-  when: www_directory.stat.exists == false//
+  when: www_directory.stat.exists == false
