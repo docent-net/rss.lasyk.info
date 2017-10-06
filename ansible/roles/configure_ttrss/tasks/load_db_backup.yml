@@ -1,0 +1,25 @@
+- name: Check if DB exists
+  stat:
+    path: /var/lib/mysql/tinyrss
+  register: db_directory
+
+- block:
+  - name: Download db backup from Cloud storage
+    # not using ansible gc_storage module as it doesn't support
+    # service-account/IAM roles authentication that are assigned to
+    # GCE instances
+    command: gsutil cp gs://{{ gcp.cloud_storage_bucket_name }}/backups/tinyrss-latest.sql.gz /srv/tinyrss-latest.sql.gz
+    args:
+      creates: /srv/tinyrss-latest.sql.gz
+
+  mysql_db:
+    name: "tinyrss"
+    state: import
+    target: /srv/tinyrss-latest.sql.gz
+
+  - name: Cleanup
+    file:
+      path: /srv/tinyrss-latest.sql.gz
+      state: absent
+
+  when: db_directory.stat.exists == false
