@@ -32,69 +32,63 @@
     path: /root/.my.cnf
   register: mysql_config_exists
 
-- debug: var=mysql_config_exists
-- name: Check whether there's any old configuration
-  stat:
-    path: /root/.my.cnfd
-  register: mysqld_config_exists
+- block:
+  - name: Generate password
+    command: mkpasswd -l 20
+    register: mariadb_root_pass_generated
+    no_log: true
 
-- debug: var=mysqld_config_exists
+  - name: Generate password
+    set_fact:
+      mariadb_root_pass: "{{ mariadb_root_pass_generated.stdout }}"
 
-- name: Generate password
-  command: mkpasswd -l 20
-  register: mariadb_root_pass_generated
-  no_log: true
+  # mysql_safe_installation
+  - name: Set root Password
+    mysql_user:
+      name: root
+      host: "localhost"
+      password: "{{ mariadb_root_pass }}"
+      state: present
 
-- name: Generate password
-  set_fact:
-    mariadb_root_pass: "{{ mariadb_root_pass_generated.stdout }}"
+  - name: Add .my.cnf
+    template:
+      src: my.cnf.j2
+      dest: /root/.my.cnf
+      owner: root
+      group: root
+      mode: 0600
 
-# mysql_safe_installation
-- name: Set root Password
-  mysql_user:
-    name: root
-    host: "localhost"
-    password: "{{ mariadb_root_pass }}"
-    state: present
+  - name: Set root Password
+    mysql_user:
+      name: root
+      host: "{{ item }}"
+      password: "{{ mariadb_root_pass }}"
+      state: present
+    with_items:
+      - 127.0.0.1
+      - ::1
 
-- name: Add .my.cnf
-  template:
-    src: my.cnf.j2
-    dest: /root/.my.cnf
-    owner: root
-    group: root
-    mode: 0600
+  - name: Remove anonymous users
+    command: 'mysql -ne "{{ item }}"'
+    with_items:
+      - DELETE FROM mysql.user WHERE User=''
+    changed_when: False
 
-- name: Set root Password
-  mysql_user:
-    name: root
-    host: "{{ item }}"
-    password: "{{ mariadb_root_pass }}"
-    state: present
-  with_items:
-    - 127.0.0.1
-    - ::1
+  - name: Disallow root login remotely
+    command: 'mysql -ne "{{ item }}"'
+    with_items:
+      - DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1')
+    changed_when: False
 
-- name: Remove anonymous users
-  command: 'mysql -ne "{{ item }}"'
-  with_items:
-    - DELETE FROM mysql.user WHERE User=''
-  changed_when: False
+  - name: Remove test database and access to it
+    command: 'mysql -ne "{{ item }}"'
+    with_items:
+      - DROP DATABASE test
+      - DELETE FROM mysql.db WHERE Db='test' OR Db='test\\_%'
+    changed_when: False
+    ignore_errors: True
 
-- name: Disallow root login remotely
-  command: 'mysql -ne "{{ item }}"'
-  with_items:
-    - DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1')
-  changed_when: False
-
-- name: Remove test database and access to it
-  command: 'mysql -ne "{{ item }}"'
-  with_items:
-    - DROP DATABASE test
-    - DELETE FROM mysql.db WHERE Db='test' OR Db='test\\_%'
-  changed_when: False
-  ignore_errors: True
-
-- name: Reload privilege tables
-  command: 'mysql -ne "FLUSH PRIVILEGES"'
-  changed_when: False
+  - name: Reload privilege tables
+    command: 'mysql -ne "FLUSH PRIVILEGES"'
+    changed_when: False
+  when: mysql_config_exists.stat.exists == false
