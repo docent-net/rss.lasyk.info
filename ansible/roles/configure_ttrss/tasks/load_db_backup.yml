@@ -12,7 +12,7 @@
     args:
       creates: /srv/tinyrss-latest.sql.gz
 
-  mysql_db:
+  - mysql_db:
     name: "tinyrss"
     state: import
     target: /srv/tinyrss-latest.sql.gz
