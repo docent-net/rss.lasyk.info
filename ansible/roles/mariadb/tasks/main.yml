@@ -14,6 +14,7 @@
   with_items:
     - MariaDB-server
     - MariaDB-client
+    - expect
 
 - name: Ensure mariadb is started after boot
   service:
@@ -27,8 +28,13 @@
     state: present
 
 - name: Generate password
+  command: mkpasswd -l 20
+  register: mariadb_root_pass_generated
+  no_log: true
+
+- name: Generate password
   set_fact:
-    mariadb_root_pass: "{{ ansible_fqdn | uuid | password_hash('sha512') }}"
+    mariadb_root_pass: "{{ mariadb_root_pass.output }}"
 
 # mysql_safe_installation
 - name: Set root Password
