@@ -7,4 +7,4 @@
   service:
     name: nginx
     enabled: yes
-    state: started`
+    state: started
