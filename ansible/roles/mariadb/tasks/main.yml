@@ -40,13 +40,9 @@
 - name: Set root Password
   mysql_user:
     name: root
-    host: "{{ item }}"
+    host: "localhost"
     password: "{{ mariadb_root_pass }}"
     state: present
-  with_items:
-    - localhost
-    - 127.0.0.1
-    - ::1
 
 - name: Reload privilege tables
   command: 'mysql -ne "FLUSH PRIVILEGES"'
@@ -59,6 +55,16 @@
     owner: root
     group: root
     mode: 0600
+
+- name: Set root Password
+  mysql_user:
+    name: root
+    host: "{{ item }}"
+    password: "{{ mariadb_root_pass }}"
+    state: present
+  with_items:
+    - 127.0.0.1
+    - ::1
 
 - name: Remove anonymous users
   command: 'mysql -ne "{{ item }}"'
