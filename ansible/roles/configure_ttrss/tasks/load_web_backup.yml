@@ -1,9 +1,9 @@
 - name: Download web backup from Cloud storage
-  gc_storage:
-    bucket: "{{ gcp.cloud_storage_bucket_name }}"
-    object: backups/rss.lasyk.info-latest.tar.gz
-    dest: /srv/rss.lasyk.info-latest.tar.gz
-    mode: get
+  # not using ansible gc_storage module as it doesn't support
+  # service-account/IAM roles authentication that are assigned to
+  # GCE instances
+  command: gsutil cp gs://{{ gcp.cloud_storage_bucket_name }}/backups/rss.lasyk.info-latest.tar.gz /srv/rss.lasyk.info-latest.tar.gz
+  changed_when: false
 
 - name: Unarchive backup
   unarchive:
