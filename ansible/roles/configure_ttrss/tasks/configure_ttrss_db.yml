@@ -16,10 +16,13 @@
   - name: Create ttrss DB user
     mysql_user:
       name: tinyrss
-      host: "127.0.0.1"
+      host: "{{ item }}"
       password: "{{ mariadb_ttrss_pass }}"
       priv: "tinyrss.*:ALL"
       state: present
+    with_items:
+    - 127.0.0.1
+    - localhost
 
   - lineinfile:
       path: /srv/rss.lasyk.info/config.php.tpl
