@@ -17,3 +17,7 @@
   file:
     path: /srv/rss.lasyk.info-latest.tar.gz
     state: absent
+
+- name: Rename old config.php
+  command: mv /srv/rss.lasyk.info/config.php /srv/rss.lasyk.info/config.php.tpl
+    creates: /srv/rss.lasyk.info/config.php.tpl

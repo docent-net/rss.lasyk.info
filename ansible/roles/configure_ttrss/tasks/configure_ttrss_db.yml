@@ -1,0 +1,33 @@
+- name: Check whether there's any old configuration
+  stat:
+    path: /srv/rss.lasyk.info/config.php
+  register: ttrss_db_config_exists
+
+- block:
+  - name: Generate password
+    command: mkpasswd -l 20 -s 0
+    register: mariadb_ttrss_pass_generated
+    no_log: true
+
+  - name: Generate password
+    set_fact:
+      mariadb_ttrss_pass: "{{ mariadb_ttrss_pass_generated.stdout }}"
+
+  - name: Create ttrss DB user
+    mysql_user:
+      name: tinyrss
+      host: "127.0.0.1"
+      password: "{{ mariadb_ttrss_pass }}"
+      priv: "tinyrss.*:ALL"
+      state: present
+
+  - lineinfile:
+      path: /srv/rss.lasyk.info/config.php.tpl
+      regexp: "define\(\'DB_PASS\'\)"
+      line: " define('DB_PASS', '{{ mariadb_ttrss_pass }}');"
+
+  - name: Create config.php
+    command: mv /srv/rss.lasyk.info/config.php.tpl mv /srv/rss.lasyk.info/config.php
+      creates: /srv/rss.lasyk.info/config.php
+
+  when: ttrss_db_config.stat.exists == false
