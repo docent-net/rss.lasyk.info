@@ -1,7 +1,7 @@
 - name: Check whether there's any old configuration
   stat:
     path: /srv/rss.lasyk.info/config.php
-  register: ttrss_db_config_exists
+  register: ttrss_db_config
 
 - block:
   - name: Generate password
