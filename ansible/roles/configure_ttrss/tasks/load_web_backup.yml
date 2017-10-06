@@ -1,24 +1,32 @@
-- name: Download web backup from Cloud storage
-  # not using ansible gc_storage module as it doesn't support
-  # service-account/IAM roles authentication that are assigned to
-  # GCE instances
-  command: gsutil cp gs://{{ gcp.cloud_storage_bucket_name }}/backups/rss.lasyk.info-latest.tar.gz /srv/rss.lasyk.info-latest.tar.gz
-  changed_when: false
+- name: Check if directory exists
+  stat:
+    path: /srv/www.rss.lasyk.info
+  register: www_directory
 
-- name: Unarchive backup
-  unarchive:
-    dest: /srv
-    owner: nginx
-    group: nginx
-    mode: 0770
-    src: /srv/rss.lasyk.info-latest.tar.gz
+- block:
+  - name: Download web backup from Cloud storage
+    # not using ansible gc_storage module as it doesn't support
+    # service-account/IAM roles authentication that are assigned to
+    # GCE instances
+    command: gsutil cp gs://{{ gcp.cloud_storage_bucket_name }}/backups/rss.lasyk.info-latest.tar.gz /srv/rss.lasyk.info-latest.tar.gz
+    changed_when: false
 
-- name: Cleanup
-  file:
-    path: /srv/rss.lasyk.info-latest.tar.gz
-    state: absent
+  - name: Unarchive backup
+    unarchive:
+      dest: /srv
+      owner: nginx
+      group: nginx
+      mode: 0770
+      src: /srv/rss.lasyk.info-latest.tar.gz
 
-- name: Rename old config.php
-  command: mv /srv/rss.lasyk.info/config.php /srv/rss.lasyk.info/config.php.tpl
-  args:
-    creates: /srv/rss.lasyk.info/config.php.tpl
+  - name: Cleanup
+    file:
+      path: /srv/rss.lasyk.info-latest.tar.gz
+      state: absent
+
+  - name: Rename old config.php
+    command: mv /srv/rss.lasyk.info/config.php /srv/rss.lasyk.info/config.php.tpl
+    args:
+      creates: /srv/rss.lasyk.info/config.php.tpl
+
+  when: www_directory.stat.exists == false
