@@ -27,6 +27,19 @@
     name: MySQL-python
     state: present
 
+- name: Check whether there's any old configuration
+  stat:
+    path: /root/.my.cnf
+    register: mysql_config_exists
+
+- debug: var=mysql_config_exists
+- name: Check whether there's any old configuration
+  stat:
+    path: /root/.my.cnfd
+    register: mysqld_config_exists
+
+- debug: var=mysqld_config_exists
+
 - name: Generate password
   command: mkpasswd -l 20
   register: mariadb_root_pass_generated
