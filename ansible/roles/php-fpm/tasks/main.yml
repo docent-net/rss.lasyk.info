@@ -1,0 +1,38 @@
+- name: Install php-fpm related pkgs
+  yum:
+    name: "{{ item }}"
+    state: installed
+  with_items:
+  - php
+  - php-common
+  - php-gd
+  - php-mbstring
+  - php-process
+  - php-mysql
+  - php-xml
+  - php-cli
+  - php-fpm
+
+- name: Prepare PHP config
+  lineinfile:
+    path: /etc/php.ini
+    regexp: ';cgi.fix_pathinfo\=1'
+    line: 'cgi.fix_pathinfo=0'
+
+- name: Prepare PHP-FPM config
+  lineinfile:
+    path: /etc/php-fpm.d/www.conf
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+
+  with_items:
+  - { regexp: '^#?.?listen \= ', line: 'listen = /run/php-fpm/php-fpm.sock' }
+  - { regexp: '^#?.?listen.owner \=', line: 'listen.owner = nginx' }
+  - { regexp: '^#?.?listen.group \=', line: 'listen.group = nginx' }
+  - { regexp: '^#?.?user \=', line: 'user = nginx' }
+  - { regexp: '^#?.?group \=', line: 'group = nginx' }
+
+- name: Make sure php-fpm is started at boot
+  service:
+    name: php-fpm
+    state: started enabled: yes
