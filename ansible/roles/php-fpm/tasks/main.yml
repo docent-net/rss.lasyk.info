@@ -35,4 +35,5 @@
 - name: Make sure php-fpm is started at boot
   service:
     name: php-fpm
-    state: started enabled: yes
+    state: started
+    enabled: yes
