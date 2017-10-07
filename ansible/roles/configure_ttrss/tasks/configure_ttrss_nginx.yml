@@ -5,3 +5,5 @@
     owner: nginx
     group: nginx
     mode: 0660
+  notify:
+  - restart_nginx

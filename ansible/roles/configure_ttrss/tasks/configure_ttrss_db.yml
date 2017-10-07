@@ -35,3 +35,12 @@
       creates: /srv/{{ rss_hostname }}/config.php
 
   when: ttrss_db_config.stat.exists == false
+
+- name: Make sure Nginx can connect to DB
+  seboolean:
+    name: "{{ item }}"
+    state: yes
+    persistent: yes
+  with_items:
+  - httpd_can_network_connect
+  - httpd_can_network_connect_db
