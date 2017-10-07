@@ -29,22 +29,22 @@
     args:
       creates: "/srv/{{ rss_hostname }}/config.php.tpl"
 
+  - name: Fix SELinux labels
+    file:
+      path: "/srv/{{ rss_hostname }}"
+      setype: "httpd_sys_content_t"
+      recurse: yes
+      state: directory
+
+  - name: Fix SELinux labels
+    file:
+      path: "{{ item.path }}"
+      setype: "{{ item.setype }}"
+      recurse: yes
+      state: directory
+    with_items:
+    - { path: '/srv/{{ rss_hostname }}/cache', setype: 'httpd_sys_content_rw_t'}
+    - { path: '/srv/{{ rss_hostname }}/lock', setype: 'httpd_sys_content_rw_t'}
+    - { path: '/srv/{{ rss_hostname }}/feed-icons', setype: 'httpd_sys_content_rw_t'}
+
   when: www_directory.stat.exists == false
-
-- name: Fix SELinux labels
-  file:
-    path: "/srv/{{ rss_hostname }}"
-    setype: "httpd_sys_content_t"
-    recurse: yes
-    state: directory
-
-- name: Fix SELinux labels
-  file:
-    path: "{{ item.path }}"
-    setype: "{{ item.setype }}"
-    recurse: yes
-    state: directory
-  with_items:
-  - { path: '/srv/{{ rss_hostname }}/cache', setype: 'httpd_sys_content_rw_t'}
-  - { path: '/srv/{{ rss_hostname }}/lock', setype: 'httpd_sys_content_rw_t'}
-  - { path: '/srv/{{ rss_hostname }}/feed-icons', setype: 'httpd_sys_content_rw_t'}
