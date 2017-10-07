@@ -1,6 +1,6 @@
 - name: Check if directory exists
   stat:
-    path: /srv/rss.lasyk.info
+    path: "/srv/{{ rss_hostname }}"
   register: www_directory
 
 - block:
@@ -8,7 +8,7 @@
     # not using ansible gc_storage module as it doesn't support
     # service-account/IAM roles authentication that are assigned to
     # GCE instances
-    command: gsutil cp gs://{{ gcp.cloud_storage_bucket_name }}/backups/rss.lasyk.info-latest.tar.gz /srv/rss.lasyk.info-latest.tar.gz
+    command: gsutil cp gs://{{ gcp.cloud_storage_bucket_name }}/backups/{{ rss_hostname }}-latest.tar.gz /srv/{{ rss_hostname }}-latest.tar.gz
     changed_when: false
 
   - name: Unarchive backup
@@ -17,16 +17,16 @@
       owner: nginx
       group: nginx
       mode: 0770
-      src: /srv/rss.lasyk.info-latest.tar.gz
+      src: "/srv/{{ rss_hostname }}-latest.tar.gz"
 
   - name: Cleanup
     file:
-      path: /srv/rss.lasyk.info-latest.tar.gz
+      path: "/srv/{{ rss_hostname }}-latest.tar.gz"
       state: absent
 
   - name: Rename old config.php
-    command: mv /srv/rss.lasyk.info/config.php /srv/rss.lasyk.info/config.php.tpl
+    command: mv /srv/{{ rss_hostname }}/config.php /srv/{{ rss_hostname }}/config.php.tpl
     args:
-      creates: /srv/rss.lasyk.info/config.php.tpl
+      creates: "/srv/{{ rss_hostname }}/config.php.tpl"
 
   when: www_directory.stat.exists == false

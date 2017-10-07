@@ -1,6 +1,7 @@
 - include: load_web_backup.yml
 - include: configure_ttrss_db.yml
 - include: load_db_backup.yml
+- include: configure_ttrss_nginx.yml
 # todo: generate SSL cert from letsencrypt and export to safe storage
 # todo: reconfigure nginx (SSL)
 # todo: configure systemd timer (updating RSS entries)

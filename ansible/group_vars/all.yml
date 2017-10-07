@@ -1,2 +1,4 @@
 gcp:
   cloud_storage_bucket_name: ml-rss-lasyk-info
+
+rss_hostname: rss.lasyk.info

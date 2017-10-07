@@ -1,0 +1,7 @@
+- name: Load vhost config into Nginx
+  template:
+    src: rss.lasyk.info.conf.j2
+    dest: "/etc/nginx/conf.d/{{ rss_hostname }}"
+    owner: nginx
+    group: nginx
+    mode: 0660
