@@ -1,0 +1,10 @@
+[Unit]
+Description=ttrss_feed_updater
+After=network.target mysql.service
+
+[Service]
+User=nginx
+ExecStart={{ rss_hostname }}/update_daemon2.php
+
+[Install]
+WantedBy=multi-user.target

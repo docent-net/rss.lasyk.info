@@ -1,0 +1,14 @@
+- name: Create ttrss feed updater systemd service
+  template:
+    src: ttrss_feed_updater.service.j2
+    dest: /etc/systemd/system/ttrss_feed_updater.service
+    owner: root
+    group: root
+    mode: 0600
+
+- name: Ensure ttrss feed updater is started and enabled
+  systemd:
+    state: restarted
+    enabled: yes
+    daemon_reload: yes
+    name: ttrss_feed_updater
