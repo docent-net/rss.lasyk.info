@@ -36,6 +36,11 @@
 
   when: ttrss_db_config.stat.exists == false
 
+- name: Install SeLinux Py prerequisities
+  yum:
+    name: libsemanage-python support
+    state: installed
+
 - name: Make sure Nginx can connect to DB
   seboolean:
     name: "{{ item }}"
