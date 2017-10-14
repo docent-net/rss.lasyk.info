@@ -38,7 +38,7 @@
 
 - name: Install SeLinux Py prerequisities
   yum:
-    name: libsemanage-python support
+    name: libsemanage-python
     state: installed
 
 - name: Make sure Nginx can connect to DB

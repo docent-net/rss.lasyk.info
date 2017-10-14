@@ -1,0 +1,7 @@
+# create and test DB backup script (sqldump, gc copy, date rename w/latest)
+# configure timer for DB backup
+# create and test www backup script (www tar.gz, gc copy, date rename w/latest)
+# configure timer for www backup
+# create script for removing all backups
+# configure and create timer for cleaning up old backups
+# create monitoring that checks whether backups are properly saved on gc
